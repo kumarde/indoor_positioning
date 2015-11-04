@@ -1,0 +1,8 @@
+- Download Ubuntu 12.04 Precise Pangolin
+- Run Ubuntu in a virtual machine
+- Follow the instructions to install ROS-Hydro at this URL http://wiki.ros.org/hydro/Installation/Ubuntu
+- Follow the instructions to install RGBDSlamv2 at this URL http://felixendres.github.io/rgbdslam_v2/
+- If you run into a catkin_make error in the last step, try the steps at this URL http://answers.ros.org/question/190688/rgbdslam-v2-catkin_make-error/
+- If you run into a siftgpu or gpu related error in catkin_make, comment out the siftgpu related lines in /rgbdslam_catkin_ws/src/rgbdslam_v2-hydro/CMakeLists.txt (near the top)
+- Everything should be good to go! 
+
