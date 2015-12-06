@@ -6,11 +6,11 @@
 % EECS 445 - Project
 % Generate Data Matrices
 
-function [matrix, labels] = generate(type)
+function [matrix, labels] = generate(set, type, bins, normalization)
 	matrix = [];
 	labels = [];
 
-	data_folder = ['data/' type];
+	data_folder = ['data_' set '/' type];
 	sub_directories = dir(data_folder);
 
 	filters = ismember({sub_directories.name}, {'.', '..'});
@@ -25,8 +25,9 @@ function [matrix, labels] = generate(type)
 		images(filters) = [];
 
 		for j = 1:length(images)
+			fprintf('Dealing with image %s_%d.tiff\n', current_directory, j);
 			file_name = [directory_path '/' images(j).name];
-			H = histogram(file_name, 10, 2);
+			H = histogram(file_name, bins, normalization);
 			matrix = [matrix; H'];
 			labels = [labels; i];
 		end

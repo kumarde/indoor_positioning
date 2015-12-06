@@ -8,6 +8,7 @@
 
 function svm_structs = train(train_matrix, train_labels)
 	unique_labels = unique(train_labels);
+
 	for i = 1:length(unique_labels)
 		classes = (train_labels == unique_labels(i));
 		svm_structs(i) = svmtrain(train_matrix, classes);
