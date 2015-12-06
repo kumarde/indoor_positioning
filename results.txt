@@ -1,0 +1,5 @@
+SURF Features
+820 Training Images
+3 Classes
+33 Testing
+27% Accuracy
