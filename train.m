@@ -6,11 +6,8 @@
 % EECS 445 - Project
 % Train
 
-function svm_structs = train(train_matrix, train_labels)
-	unique_labels = unique(train_labels);
-
-	for i = 1:length(unique_labels)
-		classes = (train_labels == unique_labels(i));
-		svm_structs(i) = svmtrain(train_matrix, classes);
+function models = train(train_matrix)
+	for i = 1:length(train_matrix)
+		models{i} = vl_kdtreebuild(single(train_matrix{i}));
 	end
 end

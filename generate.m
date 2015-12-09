@@ -6,8 +6,14 @@
 % EECS 445 - Project
 % Generate Data Matrices
 
-function [matrix, labels] = generate(set, type, bins, normalization)
-	matrix = [];
+function [matrix, labels] = generate(set, type)
+	cache = ['cache/data_' set '_' type '_sift.mat'];
+	if exist(cache) == 2
+		load(cache);
+		return
+	end
+
+	matrix = {};
 	labels = [];
 
 	data_folder = ['data_' set '/' type];
@@ -15,6 +21,7 @@ function [matrix, labels] = generate(set, type, bins, normalization)
 
 	filters = ismember({sub_directories.name}, {'.', '..'});
 	sub_directories(filters) = [];
+	image_count = 1;
 
 	for i = 1:length(sub_directories)
 		current_directory = sub_directories(i).name;
@@ -27,9 +34,12 @@ function [matrix, labels] = generate(set, type, bins, normalization)
 		for j = 1:length(images)
 			fprintf('Dealing with image %s_%d.tiff\n', current_directory, j);
 			file_name = [directory_path '/' images(j).name];
-			H = histogram(file_name, bins, normalization);
-			matrix = [matrix; H'];
+			[points, features] = prepare(file_name, 'SIFT');
+			matrix{image_count} = features;
+			image_count = image_count + 1;
 			labels = [labels; i];
 		end
 	end
+
+	save(cache, 'matrix', 'labels');
 end
