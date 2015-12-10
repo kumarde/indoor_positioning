@@ -3,3 +3,17 @@ SURF Features
 3 Classes
 33 Testing
 27% Accuracy
+
+
+
+
+
+
+CNN
+820 Training Images
+3 Classes
+greyscale   ~60
+red         ~40
+green       ~60
+blue        ~50
+rgb         ~30-40
