@@ -17,3 +17,7 @@ red         ~40
 green       ~60
 blue        ~50
 rgb         ~30-40
+
+8 Classes
+RGB Normalize / Greyscale ~20
+RGB per color Normalize ~30
