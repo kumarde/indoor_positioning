@@ -23,11 +23,13 @@ function net = cnnTrain(trainData, trainLabels, valData, valLabels, initNet, opt
 %                 that we can resume from a finished epochs after pause)
 % 
 
+
+% CHANGED IMHEIGHT TO /3 AND RESHAPE TO 3
 nTrain = size(trainLabels, 1);
 nVal = size(valLabels, 1);
-imdb.imHeight = sqrt(size(trainData, 2));
+imdb.imHeight = sqrt(size(trainData, 2)/3);
 imdb.imWidth = imdb.imHeight;
-imdb.images.data = single(reshape(cat(1, trainData, valData)', imdb.imHeight, imdb.imWidth, 1, nTrain+nVal));
+imdb.images.data = single(reshape(cat(1, trainData, valData)', imdb.imHeight, imdb.imWidth, 3, nTrain+nVal));
 imdb.images.labels = single(cat(1, trainLabels, valLabels)');
 imdb.images.set = cat(2, ones(1, nTrain), 3*ones(1, nVal));
 [net, ~] = cnn_train(initNet, imdb, @getBatch, opts, 'val', find(imdb.images.set == 3));

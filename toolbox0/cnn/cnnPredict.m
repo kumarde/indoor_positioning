@@ -13,11 +13,11 @@ function predictions = cnnPredict(testData, model, opts)
 %
 
 for i = 1:numel(model.layers)-1, predictNet.layers{i} = model.layers{i}; end
-
+% Changed imHeight sqrt to size /3 for 3rd dim, 3 dim for reshape as well
 nTest = size(testData, 1);
-imHeight = sqrt(size(testData, 2));
+imHeight = sqrt(size(testData, 2)/3);
 imWidth = imHeight;
-data = single(reshape(testData', imHeight, imWidth, 1, nTest));
+data = single(reshape(testData', imHeight, imWidth, 3, nTest));
 predictions = zeros(nTest, 1);
 
 for t=1:opts.batchSize:nTest
