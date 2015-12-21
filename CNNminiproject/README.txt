@@ -1,1 +1,0 @@
-Please replace the file "vl_simplenn.m" in the folder "<matconvnet root>/matlab/simplenn/" by the provided revised version (where bugs in calling "vl_nnpdist" and "vl_nnloss" are fixed up).
