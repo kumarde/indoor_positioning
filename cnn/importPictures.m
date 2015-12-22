@@ -1,4 +1,4 @@
-%%
+
 % Carisa Covins
 % Alan Lundgard
 % Deepak Kumar
@@ -11,25 +11,27 @@
 % modified and had to be broken up into different .mat files for each room
 % because of the huge amount of North Campus Data Set images.
 
-%clear;
+clear;
 
 if ~exist('tmp', 'dir'), mkdir('tmp'); end
 
-photos = '../data/data_two/train';
+photos = '../data/data_three/train';
 folders = dir(photos);
 roomNames = {folders([folders.isdir]).name};
 roomNames = roomNames(3:end);
 numRooms = length(roomNames);
 
+fprintf('Running importPictures.m\n');
+fprintf('Preprocessing Dataset\n');
 imnum = 0;
 for room = 1 : numRooms
 
     train_data = [];
     train_labels = [];
 
-	subfolder = strcat(strcat(photos,'\'), roomNames(room));
+	subfolder = strcat(strcat(photos,'/'), roomNames(room)); % if mac use '/', if pc use '\'
 	subfolder = subfolder{1};
-	subfolder = strcat(subfolder, '\');
+	subfolder = strcat(subfolder, '/'); % if mac use '/', if pc use '\'
 	subfolderpath = strcat(subfolder, '*');
 	images = dir(subfolderpath);
 	images = images(3 : end);
@@ -49,7 +51,6 @@ for room = 1 : numRooms
 
 end
 
-%%
 % This creates the validation data, must be the same format as the train
 % data folder, but in test folder instead.
 photos = 'data_three/test';
@@ -83,3 +84,6 @@ end
 if ~exist('tmp', 'dir'), mkdir('tmp'); end
 %save(fullfile('tmp', 'train.mat'), 'train_data', 'train_labels');
 save(fullfile('tmp', 'val.mat'), 'val_data', 'val_labels');
+
+fprintf('importPictures.m finished\n');
+
