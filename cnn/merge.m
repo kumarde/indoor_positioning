@@ -42,54 +42,54 @@ hall_size = dow_size;
 
 % We assume each building.mat is in /tmp
 nTrain = BBB_size + dow_size + eecs_size + dude_size + fxb_size + hall_size + name_size + pier_size;
-trainData = zeros(nTrain, 192*192*3);
+trainData = zeros(nTrain, 96*96*3);
 trainLabels = zeros(nTrain, 1);
 sum = 0;
 load('tmp/bbb');
 for i = 1 : BBB_size
-    trainData(i, :) = reshape(imresize(reshape(train_data(i, :), 612, 816, 3),[192, 192]), 1, 192*192*3);
+    trainData(i, :) = reshape(imresize(reshape(train_data(i, :), 612, 816, 3),[96, 96]), 1, 96*96*3);
     trainLabels(i + sum, :) = 1;
 end
 sum = sum + BBB_size;
 load('tmp/dow');
 for i = 1 : dow_size
-    trainData(i + sum, :) = reshape(imresize(reshape(train_data(i, :), 612, 816, 3),[192, 192]), 1, 192*192*3);
+    trainData(i + sum, :) = reshape(imresize(reshape(train_data(i, :), 612, 816, 3),[96, 96]), 1, 96*96*3);
     trainLabels(i + sum, :) = 2;
 end
 sum = sum + dow_size;
 load('tmp/eecs');
 for i = 1 : eecs_size
-    trainData(i + sum, :) = reshape(imresize(reshape(train_data(i, :), 612, 816, 3),[192, 192]), 1, 192*192*3);
+    trainData(i + sum, :) = reshape(imresize(reshape(train_data(i, :), 612, 816, 3),[96, 96]), 1, 96*96*3);
     trainLabels(i + sum, :) = 3;
 end
 sum = sum + eecs_size;
 load('tmp/dude');
 for i = 1 : dude_size
-    trainData(i + sum, :) = reshape(imresize(reshape(train_data(i, :), 612, 816, 3),[192, 192]), 1, 192*192*3);
+    trainData(i + sum, :) = reshape(imresize(reshape(train_data(i, :), 612, 816, 3),[96, 96]), 1, 96*96*3);
     trainLabels(i + sum, :) = 4;
 end
 sum = sum + dude_size;
 load('tmp/fxb');
 for i = 1 : fxb_size
-    trainData(i + sum, :) = reshape(imresize(reshape(train_data(i, :), 612, 816, 3),[192, 192]), 1, 192*192*3);
+    trainData(i + sum, :) = reshape(imresize(reshape(train_data(i, :), 612, 816, 3),[96, 96]), 1, 96*96*3);
     trainLabels(i + sum, :) = 5;
 end
 sum = sum + fxb_size;
 load('tmp/hall');
 for i = 1 : hall_size
-    trainData(i + sum, :) = reshape(imresize(reshape(train_data(i, :), 612, 816, 3),[192, 192]), 1, 192*192*3);
+    trainData(i + sum, :) = reshape(imresize(reshape(train_data(i, :), 612, 816, 3),[96, 96]), 1, 96*96*3);
     trainLabels(i + sum, :) = 6;
 end
 sum = sum + hall_size;
 load('tmp/name');
 for i = 1 : name_size
-    trainData(i + sum, :) = reshape(imresize(reshape(train_data(i, :), 612, 816, 3),[192, 192]), 1, 192*192*3);
+    trainData(i + sum, :) = reshape(imresize(reshape(train_data(i, :), 612, 816, 3),[96, 96]), 1, 96*96*3);
     trainLabels(i + sum, :) = 7;
 end
 sum = sum + name_size;
 load('tmp/pier');
 for i = 1 : pier_size
-    trainData(i + sum, :) = reshape(imresize(reshape(train_data(i, :), 612, 816, 3),[192, 192]), 1, 192*192*3);
+    trainData(i + sum, :) = reshape(imresize(reshape(train_data(i, :), 612, 816, 3),[96, 96]), 1, 96*96*3);
     trainLabels(i + sum, :) = 8;
 end
 sum = sum + pier_size;

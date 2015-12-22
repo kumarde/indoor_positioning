@@ -50,10 +50,10 @@ for room = 1 : numRooms
     save(fullfile('tmp', char(matname)), 'train_data', 'train_labels', '-v7.3');
 
 end
-
+%%
 % This creates the validation data, must be the same format as the train
 % data folder, but in test folder instead.
-photos = 'data_three/test';
+photos = '../data/data_three/test';
 folders = dir(photos);
 roomNames = {folders([folders.isdir]).name};
 roomNames = roomNames(3:end);
