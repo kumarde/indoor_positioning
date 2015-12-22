@@ -17,11 +17,13 @@ folders = dir(photos);
 roomNames = {folders([folders.isdir]).name};
 roomNames = roomNames(3:end);
 numRooms = length(roomNames);
-train_data = [];
-train_labels = [];
 
 imnum = 0;
 for room = 1 : numRooms
+
+    train_data = [];
+    train_labels = [];
+
 	subfolder = strcat(strcat(photos,'\'), roomNames(room));
 	subfolder = subfolder{1};
 	subfolder = strcat(subfolder, '\');
@@ -37,6 +39,11 @@ for room = 1 : numRooms
 	   image = reshape(image, [1, 612*816*3]);
 	   train_data = [train_data; image];
 	end
+        
+    fprintf('Room number = %d finished!\n', room);
+    matname = strcat(roomNames(room), '.mat');
+    save(fullfile('tmp', char(matname)), 'train_data', 'train_labels', '-v7.3');
+
 end
 %}
 %%
