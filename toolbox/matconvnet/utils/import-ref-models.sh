@@ -5,12 +5,12 @@
 # Models are written to <MATCONVNET>/data/models
 # You can delete <MATCONVNET>/data/tmp after conversion
 
-CAFFE_URL=http://dl.caffe.berkeleyvision.org
+CAFFE_URL=http://dl.caffe.berkeleyvision.org/
 CAFFE_GIT=https://github.com/BVLC/caffe/raw
-VGG_URL=http://www.robots.ox.ac.uk/~vgg/software/deep_eval/releases
+VGG_URL=http://www.robots.ox.ac.uk/~vgg/software/deep_eval/releases/
 VGG_DEEPEVAL=deepeval-encoder-1.0.1
 VGG_DEEPEVAL_MODELS=models-1.0.1
-VGG_VERYDEEP_GIST=https://gist.githubusercontent.com/ksimonyan
+VGG_VERYDEEP_GIST=https://gist.githubusercontent.com/ksimonyan/
 VGG_VERYDEEP_URL=http://www.robots.ox.ac.uk/~vgg/software/very_deep/caffe
 
 # Obtain the path of this script
@@ -22,7 +22,6 @@ converter="python $SCRIPTPATH/import-caffe.py"
 data="$SCRIPTPATH/../data"
 
 mkdir -p "$data"/{tmp/vgg,tmp/caffe,models}
-overwrite=no
 
 # --------------------------------------------------------------------
 # VGG Very Deep
@@ -45,10 +44,6 @@ fi
 
 if true
 then
-    # Remark: the VD models want the `caffe` format, not the
-    # `vgg-caffe` as for the Devil's models below. Preprocessing is
-    # `vgg-caffe` in both cases, however.
-
     base="$data/tmp/vgg/"
     in=(VGG_ILSVRC_19_layers VGG_ILSVRC_16_layers)
     out=(verydeep-19 verydeep-16)
@@ -56,17 +51,14 @@ then
 
     for ((i=0;i<${#in[@]};++i)); do
         out="$data/models/imagenet-vgg-${out[i]}.mat"
-        if test ! -e "$out" -o "$overwrite" = yes ; then
+        if test ! -e "$out" ; then
             $converter \
-                --output-format=simplenn \
                 --caffe-variant=caffe \
                 --preproc=vgg-caffe \
-	        --remove-dropout \
-                --remove-loss \
-                --synsets="$data/tmp/${synset[i]}/synset_words.txt" \
                 --average-value="(123.68, 116.779, 103.939)" \
-                --caffe-data="$base/${in[i]}.caffemodel" \
+                --synsets="$data/tmp/${synset[i]}/synset_words.txt" \
                 "$base/${in[i]}_deploy.prototxt" \
+                "$base/${in[i]}.caffemodel" \
                 "$out"
         else
             echo "$out exists"
@@ -100,18 +92,14 @@ then
 
     for ((i=0;i<${#in[@]};++i)); do
         out="$data/models/imagenet-vgg-${out[i]}.mat"
-        if test ! -e "$out" -o "$overwrite" = yes ; then
+        if test ! -e "$out" ; then
             $converter \
-                --output-format=simplenn \
                 --caffe-variant=vgg-caffe \
                 --preproc=vgg-caffe \
-	        --remove-dropout \
-                --remove-loss \
-                --color-format=rgb \
-                --synsets="$data/tmp/${synset[i]}/synset_words.txt" \
                 --average-image="$base/mean.mat" \
-                --caffe-data="$base/${in[i]}/model" \
+                --synsets="$data/tmp/${synset[i]}/synset_words.txt" \
                 "$base/${in[i]}/param.prototxt" \
+                "$base/${in[i]}/model" \
                 "$out"
         else
             echo "$out exists"
@@ -141,30 +129,24 @@ then
     base=$data/tmp/caffe
 
     out=$data/models/imagenet-caffe-alex.mat
-    test ! -e "$out" -o "$overwrite" = yes && \
-        $converter \
-        --output-format=simplenn \
+    test ! -e "$out" && \
+    $converter \
         --caffe-variant=caffe \
         --preproc=caffe \
-	--remove-dropout \
-        --remove-loss \
-        --synsets="$base/synset_words.txt" \
         --average-image="$base/imagenet_mean.binaryproto" \
-        --caffe-data="$base/caffe_alexnet_model" \
+        --synsets="$base/synset_words.txt" \
         "$base/alexnet_deploy.prototxt" \
+        "$base/caffe_alexnet_model" \
         "$out"
 
     out=$data/models/imagenet-caffe-ref.mat
-    test ! -e "$out" -o "$overwrite" = yes && \
-        $converter \
-        --output-format=simplenn \
+    test ! -e "$out" && \
+    $converter \
         --caffe-variant=caffe \
         --preproc=caffe \
-	--remove-dropout \
-        --remove-loss \
-        --synsets="$base/synset_words.txt" \
         --average-image="$base/imagenet_mean.binaryproto" \
-        --caffe-data="$base/caffe_reference_imagenet_model" \
+        --synsets="$base/synset_words.txt" \
         "$base/imagenet_deploy.prototxt" \
+        "$base/caffe_reference_imagenet_model" \
         "$out"
 fi

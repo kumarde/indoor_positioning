@@ -29,9 +29,9 @@ for room = 1 : numRooms
     train_data = [];
     train_labels = [];
 
-	subfolder = strcat(strcat(photos,'/'), roomNames(room)); % if mac use '/', if pc use '\'
+	subfolder = strcat(strcat(photos,'/'), roomNames(room));
 	subfolder = subfolder{1};
-	subfolder = strcat(subfolder, '/'); % if mac use '/', if pc use '\'
+	subfolder = strcat(subfolder, '/');
 	subfolderpath = strcat(subfolder, '*');
 	images = dir(subfolderpath);
 	images = images(3 : end);

@@ -19,10 +19,10 @@ DEBUG ?=
 ARCH ?= maci64
 
 # Configure MATLAB
-MATLABROOT ?= /Applications/MATLAB_R2015a.app
+MATLABROOT ?= /Applications/MATLAB_R2014b.app
 
 # Configure CUDA and CuDNN. CUDAMETHOD can be either 'nvcc' or 'mex'.
-CUDAROOT ?= /Developer/NVIDIA/CUDA-6.5
+CUDAROOT ?= /Developer/NVIDIA/CUDA-5.5
 CUDNNROOT ?= $(CURDIR)/local/
 CUDAMETHOD ?= $(if $(ENABLE_CUDNN),nvcc,mex)
 
@@ -36,14 +36,12 @@ IMAGELIB_LDFLAGS ?= $(IMAGELIB_LDFLAGS_DEFAULT)
 # Note that multiple CUDA Toolkits can be installed.
 #MATLABROOT ?= /Applications/MATLAB_R2014b.app
 #CUDAROOT ?= /Developer/NVIDIA/CUDA-6.0
-#MATLABROOT ?= /Applications/MATLAB_R2015a.app
-#CUDAROOT ?= /Developer/NVIDIA/CUDA-7.0
 #MATLABROOT ?= /Applications/MATLAB_R2015b.app
-#CUDAROOT ?= /Developer/NVIDIA/CUDA-7.5
+#CUDAROOT ?= /Developer/NVIDIA/CUDA-6.5
 
 # Maintenance
 NAME = matconvnet
-VER = 1.0-beta17
+VER = 1.0-beta16
 DIST = $(NAME)-$(VER)
 LATEST = $(NAME)-latest
 RSYNC = rsync
@@ -61,8 +59,7 @@ MEXARCH = $(subst mex,,$(shell $(MEXEXT)))
 MEXOPTS ?= matlab/src/config/mex_CUDA_$(ARCH).xml
 MEXFLAGS = -cxx -largeArrayDims -lmwblas \
 $(if $(ENABLE_GPU),-DENABLE_GPU,) \
-$(if $(ENABLE_CUDNN),-DENABLE_CUDNN -I$(CUDNNROOT)/include,)
-MEXFLAGS_CPU = $(MEXFLAGS)
+$(if $(ENABLE_CUDNN),-DENABLE_CUDNN -I$(CUDNNROOT),)
 MEXFLAGS_GPU = $(MEXFLAGS) -f "$(MEXOPTS)"
 SHELL = /bin/bash # sh not good enough
 
@@ -76,7 +73,7 @@ NVCCVER_LT_70 = $(shell test $(NVCCVER) -lt 070000 && echo true)
 NVCCFLAGS = \
 -gencode=arch=compute_30,code=\"sm_30,compute_30\" \
 -DENABLE_GPU \
-$(if $(ENABLE_CUDNN),-DENABLE_CUDNN -I$(CUDNNROOT)/include,) \
+$(if $(ENABLE_CUDNN),-DENABLE_CUDNN -I$(CUDNNROOT),) \
 -I"$(MATLABROOT)/extern/include" \
 -I"$(MATLABROOT)/toolbox/distcomp/gpu/extern/include" \
 -Xcompiler -fPIC
@@ -101,24 +98,22 @@ endif
 
 # Mac OS X Intel
 ifeq "$(ARCH)" "$(filter $(ARCH),maci64)"
-comma:=,
-MEXLDFLAGS := -Wl,-rpath -Wl,"$(CUDAROOT)/lib"
-MEXLDFLAGS += $(if $(ENABLE_CUDNN),-Wl$(comma)-rpath -Wl$(comma)"$(CUDNNROOT)/lib",)
+MEXFLAGS_GPU += -L$(CUDAROOT)/lib
 ifeq ($(NVCCVER_LT_70),true)
-MEXLDFLAGS += -stdlib=libstdc++
+# if using an old version of CUDA
+MEXFLAGS_NVCC += -L$(CUDAROOT)/lib LDFLAGS='$$LDFLAGS -stdlib=libstdc++'
+else
+MEXFLAGS_NVCC += -L$(CUDAROOT)/lib LDFLAGS='$$LDFLAGS'
 endif
-MEXFLAGS_NVCC += -L"$(CUDAROOT)/lib" $(if $(ENABLE_CUDNN),-L"$(CUDNNROOT)/lib",) LDFLAGS='$$LDFLAGS $(MEXLDFLAGS)'
-MEXFLAGS_GPU  += -L"$(CUDAROOT)/lib" $(if $(ENABLE_CUDNN),-L"$(CUDNNROOT)/lib",) LDFLAGS='$$LDFLAGS $(MEXLDFLAGS)'
 IMAGELIB_DEFAULT = quartz
 endif
 
 # Linux
 ifeq "$(ARCH)" "$(filter $(ARCH),glnxa64)"
-MEXFLAGS_NVCC += -L"$(CUDAROOT)/lib64" $(if $(ENABLE_CUDNN),-L"$(CUDNNROOT)/lib64",)
-MEXFLAGS_GPU  += -L"$(CUDAROOT)/lib64" $(if $(ENABLE_CUDNN),-L"$(CUDNNROOT)/lib64",)
+MEXFLAGS_GPU += -L$(CUDAROOT)/lib64
+MEXFLAGS_NVCC += -L$(CUDAROOT)/lib64
 IMAGELIB_DEFAULT = libjpeg
-MEXFLAGS_GPU += CXXOPTIMFLAGS='$$CXXOPTIMFLAGS -Xcompiler -mssse3,-ftree-vect-loop-version,-ffast-math,-funroll-all-loops'
-MEXFLAGS_CPU += CXXOPTIMFLAGS='$$CXXOPTIMFLAGS -mssse3 -ftree-vect-loop-version -ffast-math -funroll-all-loops'
+MEXFLAGS += CXXOPTIMFLAGS='$$CXXOPTIMFLAGS -mssse3 -ftree-vect-loop-version -ffast-math -funroll-all-loops'
 NVCCFLAGS += -Xcompiler -mssse3,-ftree-vect-loop-version,-ffast-math,-funroll-all-loops
 endif
 
@@ -135,8 +130,8 @@ ifdef ENABLE_IMREADJPEG
 MEXFLAGS += $(IMAGELIB_CFLAGS) $(IMAGELIB_LDFLAGS)
 endif
 
-MEXFLAGS_GPU += -lcublas -lcudart $(if $(ENABLE_CUDNN),-lcudnn,)
-MEXFLAGS_NVCC += -lcublas -lcudart $(if $(ENABLE_CUDNN),-lcudnn,)
+MEXFLAGS_GPU += -lcublas -lcudart $(if $(ENABLE_CUDNN),-L$(CUDNNROOT) -lcudnn,)
+MEXFLAGS_NVCC += -lcublas -lcudart $(if $(ENABLE_CUDNN),-L$(CUDNNROOT) -lcudnn,)
 
 # --------------------------------------------------------------------
 #                                                      Build MEX files
@@ -275,13 +270,5 @@ post-models:
 	$(RSYNC) -aP data/models/*.mat $(HOST)/models/
 
 post-doc: doc
-	$(RSYNC) -aP doc/matconvnet-manual.pdf $(HOST)/
-	$(RSYNC) \
-		--recursive \
-		--perms \
-	        --verbose \
-	        --delete \
-	        --exclude=download \
-	        --exclude=models \
-	        --exclude=matconvnet-manual.pdf \
-	        --exclude=.htaccess doc/site/site/ $(HOST)/
+	$(RSYNC) -aP README.md doc/matconvnet-manual.pdf $(HOST)/
+	$(RSYNC) -aP README.md doc/site/site/ $(HOST)/

@@ -2,26 +2,20 @@ function [opts, args] = vl_argparse(opts, args, varargin)
 %VL_ARGPARSE Parse list of parameter-value pairs.
 %   OPTS = VL_ARGPARSE(OPTS, ARGS) updates the structure OPTS based on
 %   the specified parameter-value pairs ARGS={PAR1, VAL1, ... PARN,
-%   VALN}. If a parameter PAR cannot be matched to any of the fields
-%   in OPTS, the function generates an error.
+%   VALN}. The function produces an error if an unknown parameter name
+%   is passed on.
 %
-%   One or more of the (PAR, VAL) pairs in the argument list can be
-%   replaced by a structure; in this case, the fields of the structure
-%   are used as paramater names and the field values as parameter
-%   values.
+%   Values that are structures are copied recursively. This behaviour
+%   can be suppressed by using VL_ARGPARSE(OPTS, ARGS, 'nonrecursive').
 %
-%   Parameters that have a struct value in OPTS are processed
-%   recursively, updating the individual subfields.  This behaviour
-%   can be suppressed by using VL_ARGPARSE(OPTS, ARGS,
-%   'nonrecursive'), in which case the struct value is copied directly
-%   (hence deleting any existing subfield existing in OPTS). A direct
-%   copy occurrs also if the struct value in OPTS is a structure with
-%   no fields.
+%   Any of the PAR, VAL pairs can be replaced by a structure; in this
+%   case, the fields of the structure are used as paramaters and the
+%   field values as values.
 %
 %   [OPTS, ARGS] = VL_ARGPARSE(OPTS, ARGS) copies any parameter in
 %   ARGS that does not match OPTS back to ARGS instead of producing an
-%   error. Options specified as structures are passed back as a list
-%   of (PAR, VAL) pairs.
+%   error. Options specified as structures are expaned back to PAR,
+%   VAL pairs.
 %
 %   Example::
 %     The function can be used to parse a list of arguments
@@ -88,33 +82,20 @@ for i = 1:numel(params)
     field = findfield(opts, field) ;
   end
   if ~isempty(field)
-    % The parameter was found in OPTS
-    
-    if isstruct(opts.(field))
-      % The parameter has a struct value (in OPTS)
-      if ~isstruct(values{i})
-        error('Cannot assign a non-struct value to the struct parameter ''%s''.', ...
-          field) ;
+    if isstruct(values{i}) & recursive
+      if ~isstruct(opts.(field))
+        error('The value specified for the parameter ''%s'' is a structure, but this parameter is not defined as a structure in OPTS.',field) ;
       end
-      if recursive && numel(fieldnames(opts.(field))) > 0
-        % Process the struct value recursively
-        if nargout > 1
-          [opts.(field), rest] = vl_argparse(opts.(field), values{i}) ;
-          args = horzcat(args, {field, cell2struct(rest(2:2:end), rest(1:2:end), 2)}) ;
-        else
-          opts.(field) = vl_argparse(opts.(field), values{i}) ;
-        end
+      if nargout > 1
+        [opts.(field), rest] = vl_argparse(opts.(field), values{i}) ;
+        args = horzcat(args, {field, cell2struct(rest(2:2:end), rest(1:2:end), 2)}) ;
       else
-        % Copy the struct value as is
-        opts.(field) = values{i} ;
+        opts.(field) = vl_argparse(opts.(field), values{i}) ;
       end
     else
-      % The parameter does not have a struct value (in OPTS)
-      % Copy as is
       opts.(field) = values{i} ;
     end
   else
-    % The parameter was *not* found in OPTS
     if nargout <= 1
       error('Uknown parameter ''%s''', params{i}) ;
     else

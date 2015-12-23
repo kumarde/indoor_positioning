@@ -52,12 +52,6 @@ classdef ConvTranspose < dagnn.Layer
         params{2} = zeros(obj.size(3),1,'single') * sc ;
       end
     end
-    
-    function set.size(obj, ksize)
-      % make sure that ksize has 4 dimensions
-      ksize = [ksize(:)' 1 1 1 1] ;
-      obj.size = ksize(1:4) ;
-    end
 
     function set.crop(obj, crop)
       if numel(crop) == 1
@@ -79,11 +73,7 @@ classdef ConvTranspose < dagnn.Layer
 
     function obj = ConvTranspose(varargin)
       obj.load(varargin) ;
-      % normalize field by implicitly calling setters defined in
-      % dagnn.Filter and here
-      obj.size = obj.size ;
       obj.upsample = obj.upsample ;
-      obj.crop = obj.crop ;
     end
   end
 end

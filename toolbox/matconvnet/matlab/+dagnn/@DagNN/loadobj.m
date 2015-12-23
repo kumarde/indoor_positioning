@@ -2,9 +2,6 @@ function obj = loadobj(s)
 % LOADOBJ  Initialize a DagNN object from a structure.
 %   OBJ = LOADOBJ(S) initializes a DagNN objet from the structure
 %   S. It is the opposite of S = OBJ.SAVEOBJ().
-%   If S is a string, initializes the DagNN object with data
-%   from a mat-file S. Otherwise, if S is an instance of `dagnn.DagNN`,
-%   returns S.
 
 % Copyright (C) 2015 Karel Lenc and Andrea Vedaldi.
 % All rights reserved.
@@ -12,7 +9,6 @@ function obj = loadobj(s)
 % This file is part of the VLFeat library and is made available under
 % the terms of the BSD license (see the COPYING file).
 
-if ischar(s) s = load(s); end
 if isstruct(s)
   obj = dagnn.DagNN() ;
   for l = 1:numel(s.layers)
@@ -48,8 +44,6 @@ if isstruct(s)
     f = char(f) ;
     obj.(f) = s.(f) ;
   end
-elseif isa(s, 'dagnn.DagNN')
-  obj = s ;
 else
-  error('Unknown data type %s for `loadobj`.', class(s));
+  obj = s ;
 end

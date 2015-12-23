@@ -63,7 +63,7 @@ vl::nnconv_forward(Context& context,
     case vl::GPU:
 #if ENABLE_CUDNN
       if (context.getCudaHelper().getCudnnEnabled()) {
-        status = vl::impl::nnconv_cudnn<float>::forward
+        status = vl::impl::nnconv_forward_cudnn<float>
         (context,
          output, outputMult,
          data, dataMult,
@@ -137,7 +137,7 @@ vl::nnconv_backward(Context& context,
     case vl::GPU:
 #if ENABLE_CUDNN
       if (context.getCudaHelper().getCudnnEnabled()) {
-        status = vl::impl::nnconv_cudnn<float>::backward
+        status = vl::impl::nnconv_backward_cudnn<float>
         (context,
          derData, derFilters, derBiases,
          data, filters, derOutput,

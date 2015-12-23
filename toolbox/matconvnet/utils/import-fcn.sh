@@ -28,7 +28,7 @@ pushd `dirname $0` > /dev/null
 SCRIPTPATH=`pwd`
 popd > /dev/null
 
-converter="python $SCRIPTPATH/import-caffe.py"
+converter="python $SCRIPTPATH/import-caffe-dag.py"
 data="$SCRIPTPATH/../data"
 
 mkdir -p "$data/tmp/fcn"

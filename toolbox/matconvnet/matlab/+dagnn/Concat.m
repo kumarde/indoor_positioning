@@ -1,6 +1,7 @@
 classdef Concat < dagnn.ElementWise
   properties
     dim = 3
+    numInputs = 2
   end
 
   properties (Transient)
@@ -31,12 +32,11 @@ classdef Concat < dagnn.ElementWise
     end
 
     function rfs = getReceptiveFields(obj)
-      numInputs = numel(obj.net.layers(obj.layerIndex).inputs) ;
       if obj.dim == 3 || obj.dim == 4
         rfs = getReceptiveFields@dagnn.ElementWise(obj) ;
-        rfs = repmat(rfs, numInputs, 1) ;
+        rfs = repmat(rfs, obj.numInputs, 1) ;
       else
-        for i = 1:numInputs
+        for i = 1:obj.numInputs
           rfs(i,1).size = [NaN NaN] ;
           rfs(i,1).stride = [NaN NaN] ;
           rfs(i,1).offset = [NaN NaN] ;
@@ -44,15 +44,8 @@ classdef Concat < dagnn.ElementWise
       end
     end
 
-    function load(obj, varargin)
-      s = dagnn.Layer.argsToStruct(varargin{:}) ;
-      % backward file compatibility
-      if isfield(s, 'numInputs'), s = rmfield(s, 'numInputs') ; end
-      load@dagnn.Layer(obj, s) ;
-    end
-
     function obj = Concat(varargin)
-      obj.load(varargin{:}) ;
+      obj.load(varargin) ;
     end
   end
 end

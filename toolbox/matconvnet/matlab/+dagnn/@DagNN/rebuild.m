@@ -22,9 +22,7 @@ end
 
 [obj.vars.fanin] = tolist(num2cell(varFanIn)) ;
 [obj.vars.fanout] = tolist(num2cell(varFanOut)) ;
-if ~isempty(parFanOut), 
-  [obj.params.fanout] = tolist(num2cell(parFanOut)) ;
-end
+[obj.params.fanout] = tolist(num2cell(parFanOut)) ;
 
 % dump unused variables
 keep = (varFanIn + varFanOut) > 0 ;

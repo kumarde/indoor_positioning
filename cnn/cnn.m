@@ -127,7 +127,4 @@ convnetValPredictionLarge = cnnPredict(val_data_normalized_standardized, convnet
 convnetValAccuracyLarge = mean(valLabels == convnetValPredictionLarge) * 100;
 fprintf('Convolutional neural network validation accuracy: %g%%\n', convnetValAccuracyLarge);
 
-% Get the iteration-error plot
 copyfile(fullfile(opts.expDir, 'net-train.pdf'), fullfile('tmp', 'rgb.pdf'));
-
-

@@ -1,12 +1,12 @@
 function net = vl_simplenn_move(net, destination)
-%VL_SIMPLENN_MOVE  Move a SimpleNN network between CPU and GPU.
-%   NET = VL_SIMPLENN_MOVE(NET, 'gpu') moves the network to the
-%   current GPU device. NET = VL_SIMPLENN_MOVE(NET, 'cpu') moves the
-%   network to the CPU.
+% VL_SIMPLENN_MOVE  Move a simple CNN between CPU and GPU
+%    NET = VL_SIMPLENN_MOVE(NET, 'gpu') moves the network
+%    on the current GPU device.
 %
-%   See also: VL_SIMPLENN().
+%    NET = VL_SIMPLENN_MOVE(NET, 'cpu') moves the network
+%    on the CPU.
 
-% Copyright (C) 2014-15 Andrea Vedaldi.
+% Copyright (C) 2014 Andrea Vedaldi.
 % All rights reserved.
 %
 % This file is part of the VLFeat library and is made available under
