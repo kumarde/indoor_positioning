@@ -11,7 +11,7 @@ Sudhanva Sreesha (ssreesha)
 /sift
 --------------------------------------------------------------------------------
 Instructions:
-    navigate indoor_positioning/sift
+    navigate to indoor_positioning/sift
     run main.m
 
 Dependencies:
