@@ -1,4 +1,3 @@
-
 % Carisa Covins
 % Alan Lundgard
 % Deepak Kumar
