@@ -21,8 +21,8 @@ roomNames = {folders([folders.isdir]).name};
 roomNames = roomNames(3:end);
 numRooms = length(roomNames);
 
-fprintf('Running importPictures.m\n');
-fprintf('Preprocessing Dataset\n');
+fprintf('Running importPictures.m...\n');
+fprintf('Preprocessing Dataset...\n');
 imnum = 0;
 for room = 1 : numRooms
 
@@ -44,15 +44,13 @@ for room = 1 : numRooms
 	   image = reshape(image, [1, 612*816*3]);
 	   train_data = [train_data; image];
 	end
-        
+
     fprintf('Room number = %d finished!\n', room);
     matname = strcat(roomNames(room), '.mat');
     save(fullfile('tmp', char(matname)), 'train_data', 'train_labels', '-v7.3');
 
 end
-%%
-% This creates the validation data, must be the same format as the train
-% data folder, but in test folder instead.
+
 photos = '../data/data_three/test';
 folders = dir(photos);
 roomNames = {folders([folders.isdir]).name};
@@ -82,8 +80,6 @@ for room = 1 : numRooms
 end
 
 if ~exist('tmp', 'dir'), mkdir('tmp'); end
-%save(fullfile('tmp', 'train.mat'), 'train_data', 'train_labels');
 save(fullfile('tmp', 'val.mat'), 'val_data', 'val_labels');
 
 fprintf('importPictures.m finished\n');
-
